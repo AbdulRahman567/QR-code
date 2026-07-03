@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +13,11 @@ async function bootstrap() {
   });
 
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  // Serve static files from frontend build directory in production
+  app.useStaticAssets(join(__dirname, '..', '..', 'frontend', 'dist'), {
+    prefix: '/',
+  });
 
   const port = process.env.PORT || 5000;
   await app.listen(port);
